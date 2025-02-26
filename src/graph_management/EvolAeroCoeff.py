@@ -75,7 +75,7 @@ def Show_AeroCoeff(cst_dict, DragCoeff, LiftCoeff, x_shape, DragComponent):
     ax3.legend()
 
     merged_ax.plot(x_shape, Cd_frott_upper, 'r-.', label=r"$C_{frottement}$ face supérieure")
-    merged_ax.plot(x_shape, Cd_frott_lower, 'b--', label=r"$C_{frottement}$ face inférieure")
+    merged_ax.plot(x_shape, Cd_frott_lower, 'b-.', label=r"$C_{frottement}$ face inférieure")
 
     merged_ax.plot(x_shape[::50], Cd_press_upper[::50], c='orange', linestyle=':', marker='*', fillstyle='none', markersize=10, label=r"$C_{pression}$ face supérieure")
     merged_ax.plot(x_shape[::50], Cd_press_lower[::50], c='green', linestyle=':', marker='d', fillstyle='none', markersize=10, label=r"$C_{pression}$ face inférieure")

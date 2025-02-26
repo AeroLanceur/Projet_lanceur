@@ -218,7 +218,7 @@ def Get_MachAltitude(ThermoProperties_dict):
         Nbr_mach[i] = y_vit / a
         dynamique_pressure[i] = 0.5 * rho_air * y_vit**2
 
-    fig, ax1 = plt.subplots(figsize=(10, 5))
+    fig, ax1 = plt.subplots(figsize=(14, 5))
 
     temps = B
     ax1.plot(temps, Nbr_mach, label="Mach", color="red")
