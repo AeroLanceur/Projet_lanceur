@@ -137,9 +137,9 @@ def Get_ThermoProperties():
     ThermoProperties_dict = {
         'TEMPERATURE': np.array(temperatures_arr),
         "PRESSION": np.array(pressure_arr),
-        "MASSE VOMUMIQUE": np.array(density_arr),
+        "MASSE VOLUMIQUE": np.array(density_arr),
         "VITESSE DU SON": np.array(vitesse_son_arr),
-        "ALTITUDE_Z": np.array(Z)
+        # "ALTITUDE_Z": np.array(Z)
     }
 
     return ThermoProperties_dict
@@ -196,6 +196,9 @@ def Get_MachAltitude(ThermoProperties_dict):
     xp_alt = np.array([0, 25, 50, 75, 100, 125, 150, 175, 200])
     yp_alt = np.array([0, 2546, 5538, 15084, 26923, 42552, 61538, 86000, 107692])
 
+    xp_alt_interp = np.linspace(xp_alt.min(), xp_alt.max(), 1000)
+    yp_alt_interp = np.interp(xp_alt_interp, xp_alt, yp_alt)
+
     B = np.linspace(0, 200, 1000)
 
     altitude = np.zeros_like(B)
@@ -207,10 +210,10 @@ def Get_MachAltitude(ThermoProperties_dict):
         y_alt = np.interp(b, xp_alt, yp_alt)
         altitude[i] = y_alt
         
-        T = np.interp(y_alt, ThermoProperties_dict['ALTITUDE_Z'], ThermoProperties_dict['TEMPERATURE'])
-        a = np.interp(y_alt, ThermoProperties_dict['ALTITUDE_Z'], ThermoProperties_dict['VITESSE DU SON'])
-        P = np.interp(y_alt, ThermoProperties_dict['ALTITUDE_Z'], ThermoProperties_dict['PRESSION'])
-        rho_air = np.interp(y_alt, ThermoProperties_dict['ALTITUDE_Z'], ThermoProperties_dict['MASSE VOMUMIQUE'])
+        T = np.interp(y_alt, yp_alt_interp, ThermoProperties_dict['TEMPERATURE'])
+        a = np.interp(y_alt, yp_alt_interp, ThermoProperties_dict['VITESSE DU SON'])
+        P = np.interp(y_alt, yp_alt_interp, ThermoProperties_dict['PRESSION'])
+        rho_air = np.interp(y_alt, yp_alt_interp, ThermoProperties_dict['MASSE VOLUMIQUE'])
         
         Nbr_mach[i] = y_vit / a
         dynamique_pressure[i] = 0.5 * rho_air * y_vit**2
@@ -242,3 +245,7 @@ def Get_MachAltitude(ThermoProperties_dict):
     plt.show()
 
     return temps, Nbr_mach, altitude, dynamique_pressure
+
+def Sutherland(T):
+
+    return 1.458*1e-6 * ((T**(3/2))/(110.4 + T))
