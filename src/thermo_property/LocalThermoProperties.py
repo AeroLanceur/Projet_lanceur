@@ -86,8 +86,8 @@ def Get_Local_Params(inf_cst, Mach, Velocity, deviation_angle, basic_gamma):
         return local_params
     
     elif 1.2 <= Mach_inf:
-        # régime supersonique + hypersonique
-
+        # Régime supersonique + hypersonique
+            
         if np.all(deviation_angle > 0): 
             # --> méthode des chocs
 
@@ -102,36 +102,38 @@ def Get_Local_Params(inf_cst, Mach, Velocity, deviation_angle, basic_gamma):
                 "MASSE VOLUMIQUE": AfterShock["MASSE VOLUMIQUE"], 
             }
 
-        else:
-            # --> méthode Prandtl-Meyer
+            return local_params
 
-            mach_after = np.zeros(shape=len(deviation_angle))
-            deviation_angle = np.abs(deviation_angle)
+        else:        
+            try:
+            # Régime supersonique + hypersonique
+        
+                # --> méthode Prandtl-Meyer
 
-            # if Mach_inf < 3:
-            #     gamma_mach = 1.4
-            # else:
-            #     gamma_mach = calculate_gamma_rarefied(M_infty=Mach_inf, T_infty=T_inf)
+                mach_after = np.zeros(shape=len(deviation_angle))
+                deviation_angle = np.abs(deviation_angle)
 
-            for idx, theta in enumerate(deviation_angle):
-                
-                nu_before = PrandtlMeyer(mach=Mach_inf, gamma=gamma_mach)
-                nu_after = nu_before + theta
-                mach_after[idx] = newton(inv_PrandtlMeyer, Mach_inf, args=(gamma_mach, nu_after))
+                for idx, theta in enumerate(deviation_angle):
+                    
+                    nu_before = PrandtlMeyer(mach=Mach_inf, gamma=gamma_mach)
+                    nu_after = nu_before + theta
+                    mach_after[idx] = newton(inv_PrandtlMeyer, Mach_inf, args=(gamma_mach, nu_after), maxiter=200)
 
-                # mach_after[idx] = solve_mach_from_nu(nu_after, Mach_inf, gamma)
+                T2_T1 = (1 + (gamma_mach - 1) / 2 * Mach_inf**2) / (1 + (gamma_mach - 1) / 2 * mach_after**2)
+                P2_P1 = T2_T1 ** (gamma_mach / (gamma_mach - 1))
+                rho2_rho1 = T2_T1 ** (1 / (gamma_mach - 1))
 
-            T2_T1 = (1 + (gamma_mach - 1) / 2 * Mach_inf**2) / (1 + (gamma_mach - 1) / 2 * mach_after**2)
-            P2_P1 = T2_T1 ** (gamma_mach / (gamma_mach - 1))
-            rho2_rho1 = T2_T1 ** (1 / (gamma_mach - 1))
+                local_params = {
+                    "PRESSION": P2_P1 * P_inf,
+                    "TEMPERATURE": T2_T1 * T_inf,
+                    "MASSE VOLUMIQUE": rho2_rho1 * rho_inf, 
+                }
 
-            local_params = {
-                "PRESSION": P2_P1 * P_inf,
-                "TEMPERATURE": T2_T1 * T_inf,
-                "MASSE VOLUMIQUE": rho2_rho1 * rho_inf, 
-            }
-
-        return local_params
+                return local_params
+            
+            except Exception as e:
+                print(f"Erreur détectée : {e}")  # Optionnel : pour déboguer
+                return "CONSTANT"
 
     else:
         return np.nan

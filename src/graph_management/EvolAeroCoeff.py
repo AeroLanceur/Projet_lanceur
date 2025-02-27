@@ -46,8 +46,8 @@ def Show_AeroCoeff(cst_dict, DragCoeff, LiftCoeff, x_shape, DragComponent):
     gs = GridSpec(4, 3, figure=fig)
 
     merged_ax = fig.add_subplot(gs[1, :])
-    Drag_ax = fig.add_subplot(gs[2, :], sharex=merged_ax)
-    Lift_ax = fig.add_subplot(gs[3, :], sharex=merged_ax)
+    Drag_ax = fig.add_subplot(gs[2, :])#, sharex=merged_ax)
+    Lift_ax = fig.add_subplot(gs[3, :])#, sharex=merged_ax)
 
     ax1 = fig.add_subplot(gs[0, 0])
     ax1.plot(x_shape, Cf_upper, 'r-.', label="Face inférieure")
