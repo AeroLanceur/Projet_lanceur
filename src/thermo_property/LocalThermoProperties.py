@@ -8,11 +8,82 @@ from thermo_property.GammaManagement import calculate_gamma_rarefied
 from scipy.optimize import root_scalar
 
 def Shock_Growth_S(M, n=2, k=0.1):
-    """ Fonction de croissance du choc S(M) utilisée dans le Shock Growth Model """
+    """
+    Fonction de croissance du choc S(M) utilisée dans le modèle de croissance du choc (Shock Growth Model).
+
+    Cette fonction modélise la transition entre l'écoulement subsonique et supersonique 
+    en utilisant une loi de croissance continue.
+
+    Paramètres :
+    ------------
+    M : float
+        Nombre de Mach local.
+    n : int, optionnel (par défaut = 2)
+        Exposant contrôlant la rapidité de la transition.
+    k : float, optionnel (par défaut = 0.1)
+        Facteur de lissage pour éviter les discontinuités brutales.
+
+    Retourne :
+    ----------
+    S_M : float
+        Facteur de croissance du choc.
+
+    Remarque :
+    ----------
+    - Cette fonction est utilisée pour interpoler entre les régimes subsonique et supersonique 
+      dans le modèle de croissance du choc.
+    """
     return ((M - 1)**n) / ((M - 1)**n + k)
 
 def Get_Local_Params(inf_cst, Mach, Velocity, deviation_angle, basic_gamma):
+    """
+    Calcule les paramètres locaux thermodynamiques en fonction du régime d'écoulement.
 
+    Cette fonction estime la pression, la température et la masse volumique locales en fonction 
+    du nombre de Mach, de la vitesse locale et de l'angle de déviation.
+
+    Paramètres :
+    ------------
+    inf_cst : dict
+        Dictionnaire des conditions d'écoulement libre (pression, température, masse volumique).
+    Mach : dict
+        Contient :
+        - "MACH_INF" : Nombre de Mach de l'écoulement libre.
+        - "MACH_LOCAL" : Nombre de Mach local après prise en compte de la déviation.
+    Velocity : dict
+        Contient :
+        - "V_INF" : Vitesse de l'écoulement libre.
+        - "V_LOCAL" : Vitesse locale après prise en compte de l'angle effectif.
+    deviation_angle : array-like
+        Angles de déviation locaux en radians.
+    basic_gamma : float
+        Valeur de \(\gamma\) utilisée pour un écoulement standard.
+
+    Retourne :
+    ----------
+    local_params : dict
+        Contient :
+        - "PRESSION" : Pression locale en Pascal.
+        - "TEMPERATURE" : Température locale en Kelvin.
+        - "MASSE VOLUMIQUE" : Masse volumique locale en kg/m³.
+
+    Remarque :
+    ----------
+    - Le modèle de calcul dépend du régime de Mach :
+      - Pour Mach < 0.3 : Écoulement subsonique incompressible (hypothèse de Bernoulli).
+      - Pour 0.3 ≤ Mach < 1 : Écoulement subsonique compressible (formules isentropiques).
+      - Pour 1 ≤ Mach < 1.2 : Interpolation entre régime subsonique et supersonique avec Shock Growth Model.
+      - Pour Mach ≥ 1.2 :
+        - Méthode des chocs obliques si l'angle de déviation est positif.
+        - Méthode de Prandtl-Meyer si l'angle de déviation est négatif (zone d'expansion).
+
+    - Dans le régime supersonique/hypersonique, la fonction appelle d'autres sous-fonctions :
+      - `Get_ShockAngle_Vectorized` pour obtenir l'angle de choc.
+      - `AfterShock_var` pour déterminer les conditions après le choc.
+      - `PrandtlMeyer` pour calculer l'expansion si nécessaire.
+    - Une gestion des erreurs est incluse pour assurer la robustesse du code.
+
+    """
     P_inf = inf_cst["PRESSION"]
     T_inf = inf_cst["TEMPERATURE"]
     rho_inf = inf_cst["MASSE VOLUMIQUE"]

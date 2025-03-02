@@ -40,6 +40,28 @@ density_layer = [
     # ============================================================================================ #
 
 def temperature(Z, layers):
+    """
+    Calcule la température en fonction de l'altitude.
+
+    Cette fonction détermine la température locale en effectuant une interpolation 
+    linéaire entre les différentes couches atmosphériques.
+
+    Paramètres :
+    ------------
+    Z : float
+        Altitude en mètres.
+    layers : list de tuples
+        Liste contenant les caractéristiques de chaque couche sous forme de triplet :
+        (Z_start, T_start, Tz), où :
+        - Z_start : Altitude de début de la couche.
+        - T_start : Température à cette altitude.
+        - Tz : Gradient thermique dans la couche.
+
+    Retourne :
+    ----------
+    T : float
+        Température locale en Kelvin.
+    """
     for i in range(len(layers) - 1):
         Z_start, T_start, Tz = layers[i]
         Z_next = layers[i + 1][0]
@@ -51,9 +73,47 @@ def temperature(Z, layers):
     return T_last + Tz_last * (Z - Z_last)
 
 def vitesse_son(gamma, R, T):
+    """
+    Calcule la vitesse du son en fonction de la température.
+
+    Paramètres :
+    ------------
+    gamma : float
+        Rapport des capacités thermiques (Cp/Cv).
+    R : float
+        Constante des gaz pour l'air en J/(kg.K).
+    T : float
+        Température locale en Kelvin.
+
+    Retourne :
+    ----------
+    c : float
+        Vitesse du son en m/s.
+    """
     return np.sqrt(gamma * R * T)
 
 def pressure(Z, layers):
+    """
+    Calcule la pression en fonction de l'altitude.
+
+    La pression est obtenue par interpolation exponentielle selon la stratification atmosphérique.
+
+    Paramètres :
+    ------------
+    Z : float
+        Altitude en kilomètres.
+    layers : list de tuples
+        Liste contenant les caractéristiques de chaque couche sous forme de triplet :
+        (Z_start, P_start, Pz), où :
+        - Z_start : Altitude de début de la couche.
+        - P_start : Pression à cette altitude.
+        - Pz : Facteur de décroissance exponentielle.
+
+    Retourne :
+    ----------
+    P : float
+        Pression locale en Pascal.
+    """
     for i in range(len(layers) - 1):
         Z_start, P_start, Pz = layers[i]
         Z_next = layers[i + 1][0]
@@ -64,6 +124,27 @@ def pressure(Z, layers):
     return 0 
 
 def density(Z, layers):
+    """
+    Calcule la masse volumique de l'air en fonction de l'altitude.
+
+    La masse volumique est obtenue par interpolation exponentielle selon la stratification atmosphérique.
+
+    Paramètres :
+    ------------
+    Z : float
+        Altitude en kilomètres.
+    layers : list de tuples
+        Liste contenant les caractéristiques de chaque couche sous forme de triplet :
+        (Z_start, rho_start, rho_z), où :
+        - Z_start : Altitude de début de la couche.
+        - rho_start : Masse volumique à cette altitude.
+        - rho_z : Facteur de décroissance exponentielle.
+
+    Retourne :
+    ----------
+    rho : float
+        Masse volumique de l'air en kg/m³.
+    """
     for i in range(len(layers) - 1):
         Z_start, rho_start, rho_z = layers[i]
         Z_next = layers[i + 1][0]
@@ -78,7 +159,26 @@ def density(Z, layers):
     # ================================= #
 
 def Get_ThermoProperties():
+    """
+    Génère et affiche les propriétés thermodynamiques en fonction de l'altitude.
 
+    Cette fonction calcule et affiche les évolutions de :
+    - La température
+    - La vitesse du son
+    - La pression
+    - La masse volumique
+
+    en fonction de l'altitude dans l'atmosphère standard.
+
+    Retourne :
+    ----------
+    ThermoProperties_dict : dict
+        Dictionnaire contenant :
+        - 'TEMPERATURE' : Tableau des températures (K).
+        - 'PRESSION' : Tableau des pressions (Pa).
+        - 'MASSE VOLUMIQUE' : Tableau des masses volumiques (kg/m³).
+        - 'VITESSE DU SON' : Tableau des vitesses du son (m/s).
+    """
     Z = np.linspace(0, 110000, 1000)
     Z_km = Z * 1e-3
 
@@ -145,7 +245,21 @@ def Get_ThermoProperties():
     return ThermoProperties_dict
 
 def Get_RelativeSpeed():
+    """
+    Génère et affiche l'évolution de l'altitude et de la vitesse relative d'Ariane 5.
 
+    Cette fonction utilise une interpolation linéaire pour représenter :
+    - L'évolution de l'altitude en fonction du temps.
+    - L'évolution de la vitesse relative en fonction du temps.
+
+    Retourne :
+    ----------
+    Pos : dict
+        Dictionnaire contenant :
+        - 'ALTITUDE' : Tableau des altitudes interpolées (m).
+        - 'VITESSE' : Tableau des vitesses interpolées (m/s).
+        - 'TEMPS' : Tableau du temps (s).
+    """
     xp_alt = [0, 25, 50, 75, 100, 125, 150, 175, 200]
     yp_alt = [0, 2.546, 5.538, 15.084, 26.923, 42.552, 61.538, 86, 110]
 
@@ -190,6 +304,26 @@ def Get_RelativeSpeed():
     # =================================== #
 
 def Get_MachAltitude(ThermoProperties_dict):
+    """
+    Calcule et affiche l'évolution du nombre de Mach et de l'altitude en fonction du temps.
+
+    Cette fonction interpole les valeurs de température, vitesse du son et pression pour 
+    déterminer l'évolution :
+    - Du nombre de Mach
+    - De l'altitude
+    - De la pression dynamique
+
+    Retourne :
+    ----------
+    temps : array
+        Temps en secondes.
+    Nbr_mach : array
+        Nombre de Mach en fonction du temps.
+    altitude : array
+        Altitude en mètres.
+    dynamique_pressure : array
+        Pression dynamique en Pascals.
+    """
     xp_vit = np.array([0, 11, 22, 33, 44, 55, 66, 77, 88, 100, 125, 200])
     yp_vit = np.array([0, 55.55, 166.66, 222, 277.76, 353, 395.016, 512.5, 777, 1000, 2000, 2300])
 
@@ -247,5 +381,25 @@ def Get_MachAltitude(ThermoProperties_dict):
     return temps, Nbr_mach, altitude, dynamique_pressure
 
 def Sutherland(T):
+    """
+    Calcule la viscosité dynamique de l'air en fonction de la température selon la loi de Sutherland.
 
+    Paramètres :
+    ------------
+    T : float
+        Température en Kelvin.
+
+    Retourne :
+    ----------
+    mu : float
+        Viscosité dynamique en Pa.s.
+
+    Remarque :
+    ----------
+    - La viscosité est calculée à l'aide de la formule de Sutherland :
+      \[
+      \mu = \frac{C_1 T^{3/2}}{T + C_2}
+      \]
+      où \( C_1 = 1.458 \times 10^{-6} \) Pa.s.K^(-1.5) et \( C_2 = 110.4 \) K.
+    """
     return 1.458*1e-6 * ((T**(3/2))/(110.4 + T))

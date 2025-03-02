@@ -4,7 +4,38 @@ from matplotlib.gridspec import GridSpec
 
 
 def Show_AeroCoeff(cst_dict, DragCoeff, LiftCoeff, x_shape, DragComponent):
+    """
+    Affiche l'évolution des coefficients aérodynamiques (traînée et portance) en fonction de la hauteur.
 
+    Paramètres :
+    ------------
+    cst_dict : dict
+        Dictionnaire contenant les constantes de simulation :
+        - "INF_CST" : Dictionnaire des conditions d'écoulement (Mach, altitude, etc.).
+        - "AoA" : Angle d'attaque en radians.
+    DragCoeff : dict
+        Dictionnaire contenant les coefficients de traînée :
+        - "UPPER" et "LOWER" : Contributions de frottement, pression et onde pour les faces supérieure et inférieure.
+        - "TOTAL" : Contributions totales de frottement, pression, onde et somme totale.
+    LiftCoeff : dict
+        Dictionnaire contenant les coefficients de portance :
+        - "UPPER" et "LOWER" : Contributions de la face supérieure et inférieure.
+        - "TOTAL" : Coefficient de portance total.
+    x_shape : array-like
+        Coordonnées en hauteur des points considérés.
+    DragComponent : dict
+        Dictionnaire contenant des composantes liées à la traînée :
+        - "UPPER" et "LOWER" : Coefficients de frottement, contrainte pariétale et nombre de Reynolds.
+
+    Remarque :
+    ----------
+    - Génère un graphique montrant :
+        1. L'évolution des coefficients de frottement, contraintes pariétales et Reynolds.
+        2. Les contributions individuelles à la traînée (frottement, pression et onde).
+        3. La traînée totale et sa répartition.
+        4. L'évolution du coefficient de portance (faces supérieure, inférieure et total).
+    - Les graphes sont organisés en une figure de 4x3 sous-graphiques avec un affichage optimisé.
+    """
     # arguments manager
             # --> constante de la simulation
     Mach_inf = cst_dict["INF_CST"]["MACH"]

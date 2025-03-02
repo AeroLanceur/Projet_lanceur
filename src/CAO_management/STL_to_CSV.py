@@ -29,7 +29,7 @@ def Get_CSV(stl_name: str, csv_name: str):
     """
     
     current_dir = os.getcwd()
-    stl_dir = os.path.join(current_dir, "../docs", "STL_files")
+    stl_dir = os.path.join(current_dir, "..\docs", "STL_files")
     stl_file = os.path.join(stl_dir, stl_name)
 
     if not os.path.exists(stl_file):

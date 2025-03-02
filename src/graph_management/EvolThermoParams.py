@@ -3,7 +3,54 @@ import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 
 def Show_ThermoProperties(profil_shape, cst_dict, LocalParams, PressureCoeff):
+    """
+    Affiche l'évolution des paramètres thermodynamiques sur un profil donné.
 
+    Cette fonction génère une figure contenant plusieurs sous-graphiques :
+    1. Représentation du profil aérodynamique.
+    2. Évolution de la pression sur les faces supérieure et inférieure du profil.
+    3. Évolution de la température sur les faces supérieure et inférieure du profil.
+    4. Évolution de la masse volumique sur les faces supérieure et inférieure du profil.
+    5. Distribution du coefficient de pression sur le profil.
+
+    Paramètres :
+    ------------
+    profil_shape : dict
+        Contient les coordonnées du profil :
+        - "x_shape" : Vecteur des abscisses (hauteur en m).
+        - "y_upper_" : Coordonnées y de la face supérieure du profil.
+        - "y_lower_" : Coordonnées y de la face inférieure du profil.
+
+    cst_dict : dict
+        Dictionnaire contenant les constantes de la simulation :
+        - "INF_CST" : Dictionnaire des conditions de l'écoulement (Mach, pression, température, masse volumique).
+        - "AoA" : Angle d'attaque en radians.
+
+    LocalParams : dict
+        Dictionnaire contenant les paramètres locaux sur le profil :
+        - "UPPER" : Dictionnaire des valeurs pour la face supérieure.
+        - "LOWER" : Dictionnaire des valeurs pour la face inférieure.
+        Chaque face contient les clés :
+        - "PRESSION" : Pression locale en Pascal.
+        - "TEMPERATURE" : Température locale en Kelvin.
+        - "MASSE VOLUMIQUE" : Masse volumique locale en kg/m³.
+
+    PressureCoeff : dict
+        Dictionnaire des coefficients de pression :
+        - "UPPER" : Coefficients de pression sur la face supérieure.
+        - "LOWER" : Coefficients de pression sur la face inférieure.
+
+    Sortie :
+    --------
+    Affiche une figure matplotlib avec plusieurs graphiques détaillant l'évolution des paramètres thermodynamiques 
+    le long du profil étudié.
+
+    Remarque :
+    ----------
+    - Si le nombre de Mach est inférieur à 0.3, les valeurs de pression, température et masse volumique sont constantes 
+      sur l'ensemble du profil.
+    - Sinon, les variations des grandeurs thermodynamiques sont tracées pour les deux faces.
+    """
     # argument manager -->
         # --> profil étudié
     x_shape = profil_shape["x_shape"]
