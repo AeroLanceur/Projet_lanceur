@@ -1,10 +1,10 @@
-# 🚀 Projet d'Aérodynamique Hypersonique
+# 🚀 Projet d'Aérodynamique des lanceurs
 
 ## 👨‍💻 Auteur
 **Pierre Lambin**
 
 ## 📌 Description
-Ce projet vise à étudier l'aérodynamique hypersonique d'un lanceur spatial en utilisant différentes approches, notamment l'analyse géométrique, l'estimation des coefficients aérodynamiques et la gestion des propriétés thermodynamiques.
+Ce projet vise à étudier l'aérodynamique d'un lanceur spatial en utilisant différentes approches, notamment l'analyse géométrique, l'estimation des coefficients aérodynamiques et la gestion des propriétés thermodynamiques.
 
 ## 📂 Structure du Projet
 Le projet est organisé en plusieurs modules :
